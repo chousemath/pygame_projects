@@ -1,13 +1,8 @@
-import pygame # Import the pygame library
+import pygame  # Import the pygame library
 from paddle import Paddle
 from colors import WHITE, BLACK
-from constants import (
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT,
-    PADDLE_WIDTH,
-    PADDLE_HEIGHT,
-    SPEED
-)
+from constants import (SCREEN_WIDTH, SCREEN_HEIGHT, PADDLE_WIDTH,
+                       PADDLE_HEIGHT, SPEED)
 
 # Define your window size
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -82,4 +77,3 @@ while playing:
     clock.tick(60)
 
 pygame.quit()
-

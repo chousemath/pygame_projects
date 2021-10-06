@@ -2,11 +2,11 @@ import pygame
 from colors import WHITE, BLACK
 from constants import SCREEN_HEIGHT, PADDLE_HEIGHT
 
+
 class Paddle(pygame.sprite.Sprite):
     '''
     Template for all paddle sprites
     '''
-
     def __init__(self, color, width, height, position):
         # call the constructor of the parent class
         super().__init__()
@@ -40,5 +40,3 @@ class Paddle(pygame.sprite.Sprite):
             self.rect.y = max_y
         elif self.rect.y < 0:
             self.rect.y = 0
-
-
