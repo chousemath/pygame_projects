@@ -7,8 +7,9 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT, BALL_SPEED_X, BALL_SPEED_Y
 
 
 class Ball(Sprite):
-    def __init__(self, color, side, start_x, start_y):
+    def __init__(self, color, side, start_x, start_y, player):
         super().__init__()
+        self.player = player
         self.side = side
         self.image = Surface((side, side))
         self.image.fill(BLACK)
@@ -39,6 +40,15 @@ class Ball(Sprite):
         if self.rect.y > limit:
             self.rect.y = limit
             self.velocity_y *= -1
+            if self.player.lives > 0:
+                self.player.lives -= 1
         elif self.rect.y < 0:
             self.rect.y = 0
             self.velocity_y *= -1
+
+    def bounce(self):
+        # Get the ball out of the collision
+        self.rect.x -= self.velocity_x
+        self.rect.y -= self.velocity_y
+        # Reverse the y-direction of the ball
+        self.velocity_y *= -1

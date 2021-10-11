@@ -3,7 +3,7 @@ from pygame.display import set_mode, set_caption, flip
 from pygame.time import Clock
 from pygame.draw import line
 from pygame.font import Font
-from pygame.sprite import Group
+from pygame.sprite import Group, collide_mask, spritecollide
 from constants import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
@@ -13,16 +13,18 @@ from constants import (
     SCORE_POSITION,
     LIVES_POSITION,
     FRAMERATE,
+    BRICK_WIDTH,
+    BRICK_HEIGHT,
 )
-from colors import DARKBLUE, WHITE, LIGHTBLUE
+from colors import DARKBLUE, WHITE, LIGHTBLUE, RED, ORANGE, YELLOW
 from paddle import Paddle
 from ball import Ball
+from player import Player
+from brick import Brick
 
 pyg.init()
 
-score = 0
-
-lives = 3
+player = Player(score=0, lives=30)
 
 # Open up a new game screen
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -43,16 +45,49 @@ clock = Clock()
 paddle = Paddle(color=WHITE, width=100, height=10, start_x=350, start_y=560)
 
 # Create a ball sprite
-game_ball = Ball(color=WHITE, side=10, start_x=350 + 100 / 2 - 10 / 2, start_y=560 - 10)
+ball = Ball(
+    color=WHITE,
+    side=10,
+    start_x=350 + 100 / 2 - 10 / 2,
+    start_y=560 - 10,
+    player=player,
+)
 
-# Declare  a list called that will store
-# all the sprites we will create in our game
+# Declare a group that will store all the
+# sprites we will create in our game
 all_sprites = Group()
 
 # Add the paddle to the list of sprites to
 # render
 all_sprites.add(paddle)
-all_sprites.add(game_ball)
+all_sprites.add(ball)
+
+# Declare another group that will store
+# references only to bricks
+all_bricks = Group()
+
+# Create brick of various colors and point
+# values
+BRICK_TOP_OFFSET = 100
+for i in range(0, 4):
+    x = BRICK_WIDTH + i * (BRICK_WIDTH + 10)
+    y = BRICK_TOP_OFFSET
+    brick = Brick(RED, BRICK_WIDTH, BRICK_HEIGHT, x, y, 3)
+    all_sprites.add(brick)
+    all_bricks.add(brick)
+for i in range(0, 4):
+    x = BRICK_WIDTH + i * (BRICK_WIDTH + 10)
+    y = BRICK_TOP_OFFSET + BRICK_HEIGHT + 10
+    brick = Brick(ORANGE, BRICK_WIDTH, BRICK_HEIGHT, x, y, 2)
+    all_sprites.add(brick)
+    all_bricks.add(brick)
+for i in range(0, 4):
+    x = BRICK_WIDTH + i * (BRICK_WIDTH + 10)
+    y = BRICK_TOP_OFFSET + 2 * (BRICK_HEIGHT + 10)
+    brick = Brick(YELLOW, BRICK_WIDTH, BRICK_HEIGHT, x, y, 1)
+    all_sprites.add(brick)
+    all_bricks.add(brick)
+
 
 while playing:
     for event in pyg.event.get():
@@ -73,6 +108,17 @@ while playing:
     # Main game logic should go here
     all_sprites.update()
 
+    # Handle ball/paddle collision
+    if collide_mask(ball, paddle):
+        ball.bounce()
+
+    # Handle ball/brick collision
+    brick_collisions = spritecollide(ball, all_bricks, False)
+    for brick in brick_collisions:
+        ball.bounce()
+        player.score += brick.points
+        brick.kill()
+
     # Drawing code
     # Clear the screen with dark blue
     screen.fill(DARKBLUE)
@@ -80,10 +126,39 @@ while playing:
     # text area
     line(screen, WHITE, LINE_START, LINE_END, LINE_WIDTH)
     # Display the current score
-    text = font.render(f"Score: {score}", True, WHITE)
+    text = font.render(f"Score: {player.score}", True, WHITE)
     screen.blit(text, SCORE_POSITION)
-    text = font.render(f"Lives: {lives}", True, WHITE)
+    text = font.render(f"Lives: {player.lives}", True, WHITE)
     screen.blit(text, LIVES_POSITION)
+
+    # If the player has destroyed all the bricks,
+    # let them know that they have won!
+    if len(all_bricks) == 0:
+        text = font.render("You win!", True, WHITE)
+        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 25)
+        text_rect = text.get_rect(center=position)
+        screen.blit(text, text_rect)
+
+        text = font.render('Press "x" to quit the game', True, WHITE)
+        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25)
+        text_rect = text.get_rect(center=position)
+        screen.blit(text, text_rect)
+        ball.velocity_x = ball.velocity_y = 0
+
+    # If the user is out of lives, let them know that
+    # the game is done
+    if player.lives <= 0:
+        text = font.render("Game over", True, WHITE)
+        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 25)
+        text_rect = text.get_rect(center=position)
+        screen.blit(text, text_rect)
+
+        text = font.render('Press "x" to quite the game', True, WHITE)
+        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25)
+        text_rect = text.get_rect(center=position)
+        screen.blit(text, text_rect)
+        ball.velocity_x = ball.velocity_y = 0
+
     # Draw all the sprites in their updated state
     # with a single command
     all_sprites.draw(screen)
