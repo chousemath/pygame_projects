@@ -15,6 +15,7 @@ class Snake:
             (start_pos[0] - 3 * self.side, start_pos[1]),
             (start_pos[0] - 4 * self.side, start_pos[1]),
         ]
+        self.positions = {pos: True for pos in self.body}
 
     def draw(self, screen):
         if not self.body:
@@ -43,7 +44,10 @@ class Snake:
         self.body[0] = new_head
 
         for pos in self.body:
+            self.positions[pos] = True
             rect(screen, GREEN, Rect(pos[0], pos[1], self.side, self.side))
 
         return True
 
+    def extend(self):
+        self.body.append(self.body[-1])
