@@ -94,6 +94,8 @@ while playing:
         if event.type == pyg.QUIT:
             playing = False
         elif event.type == pyg.KEYDOWN:
+            # The game should exit if the player
+            # presses the 'x' key
             if event.key == pyg.K_x:
                 playing = False
 
@@ -128,17 +130,22 @@ while playing:
     # Display the current score
     text = font.render(f"Score: {player.score}", True, WHITE)
     screen.blit(text, SCORE_POSITION)
+    # Display the current number of lives
     text = font.render(f"Lives: {player.lives}", True, WHITE)
     screen.blit(text, LIVES_POSITION)
 
     # If the player has destroyed all the bricks,
     # let them know that they have won!
     if len(all_bricks) == 0:
+        # The "You win!" message should be a little bit
+        # above the center of the screen
         text = font.render("You win!", True, WHITE)
         position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 25)
         text_rect = text.get_rect(center=position)
         screen.blit(text, text_rect)
 
+        # The "Press x to..." message should be a little
+        # below the center of the screen
         text = font.render('Press "x" to quit the game', True, WHITE)
         position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25)
         text_rect = text.get_rect(center=position)
@@ -148,11 +155,15 @@ while playing:
     # If the user is out of lives, let them know that
     # the game is done
     if player.lives <= 0:
+        # The "Game over" message should be a little bit
+        # above the center of the screen
         text = font.render("Game over", True, WHITE)
         position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 25)
         text_rect = text.get_rect(center=position)
         screen.blit(text, text_rect)
 
+        # The "Press x to..." message should be a little
+        # below the center of the screen
         text = font.render('Press "x" to quite the game', True, WHITE)
         position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25)
         text_rect = text.get_rect(center=position)
