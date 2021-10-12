@@ -1,3 +1,4 @@
+from enum import Enum
 import pygame as pyg
 from pygame.display import set_mode, set_caption, flip
 from pygame.time import Clock
@@ -30,7 +31,15 @@ player = Player(score=0, lives=30)
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = set_mode(size)
 set_caption("breakout game")
-playing = True
+
+class GameState(Enum):
+    PLAY = 1
+    WIN = 2
+    LOSE = 3
+    QUIT = 4
+
+game_state = GameState.PLAY
+
 # Create a font object to be used
 # throughout the game
 font = Font(None, 34)
@@ -89,15 +98,15 @@ for i in range(0, 4):
     all_bricks.add(brick)
 
 
-while playing:
+while game_state == GameState.PLAY:
     for event in pyg.event.get():
         if event.type == pyg.QUIT:
-            playing = False
+            game_state = GameState.QUIT
         elif event.type == pyg.KEYDOWN:
             # The game should exit if the player
             # presses the 'x' key
             if event.key == pyg.K_x:
-                playing = False
+                game_state = GameState.QUIT
 
     # Move the paddle when the user
     # uses the left and right arrow keys
