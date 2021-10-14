@@ -1,4 +1,5 @@
 from enum import Enum
+from time import sleep
 import pygame as pyg
 from pygame.display import set_mode, set_caption, flip
 from pygame.time import Clock
@@ -25,18 +26,20 @@ from brick import Brick
 
 pyg.init()
 
-player = Player(score=0, lives=30)
+player = Player(score=0, lives=10)
 
 # Open up a new game screen
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = set_mode(size)
 set_caption("breakout game")
 
+
 class GameState(Enum):
     PLAY = 1
     WIN = 2
     LOSE = 3
     QUIT = 4
+
 
 game_state = GameState.PLAY
 
@@ -143,41 +146,10 @@ while game_state == GameState.PLAY:
     text = font.render(f"Lives: {player.lives}", True, WHITE)
     screen.blit(text, LIVES_POSITION)
 
-    # If the player has destroyed all the bricks,
-    # let them know that they have won!
     if len(all_bricks) == 0:
-        # The "You win!" message should be a little bit
-        # above the center of the screen
-        text = font.render("You win!", True, WHITE)
-        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 25)
-        text_rect = text.get_rect(center=position)
-        screen.blit(text, text_rect)
-
-        # The "Press x to..." message should be a little
-        # below the center of the screen
-        text = font.render('Press "x" to quit the game', True, WHITE)
-        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25)
-        text_rect = text.get_rect(center=position)
-        screen.blit(text, text_rect)
-        ball.velocity_x = ball.velocity_y = 0
-
-    # If the user is out of lives, let them know that
-    # the game is done
-    if player.lives <= 0:
-        # The "Game over" message should be a little bit
-        # above the center of the screen
-        text = font.render("Game over", True, WHITE)
-        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 25)
-        text_rect = text.get_rect(center=position)
-        screen.blit(text, text_rect)
-
-        # The "Press x to..." message should be a little
-        # below the center of the screen
-        text = font.render('Press "x" to quite the game', True, WHITE)
-        position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25)
-        text_rect = text.get_rect(center=position)
-        screen.blit(text, text_rect)
-        ball.velocity_x = ball.velocity_y = 0
+        game_state = GameState.WIN
+    elif player.lives <= 0:
+        game_state = GameState.LOSE
 
     # Draw all the sprites in their updated state
     # with a single command
@@ -186,4 +158,35 @@ while game_state == GameState.PLAY:
     flip()
     # Limit the frame rate to 60fps
     clock.tick(FRAMERATE)
+
+# Now that we are out of the game loop, we can
+# assess the current game state and show the
+# appropriate message
+
+# If the player has destroyed all the bricks,
+# let them know that they have won!
+if game_state == GameState.WIN:
+    screen.fill(DARKBLUE)
+    # The "You win!" message should be a little bit
+    # above the center of the screen
+    text = font.render("You win!", True, WHITE)
+    position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+    text_rect = text.get_rect(center=position)
+    screen.blit(text, text_rect)
+    flip()
+    sleep(3)
+
+# If the user is out of lives, let them know that
+# the game is done
+if game_state == GameState.LOSE:
+    screen.fill(DARKBLUE)
+    # The "Game over" message should be a little bit
+    # above the center of the screen
+    text = font.render("Game over", True, WHITE)
+    position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+    text_rect = text.get_rect(center=position)
+    screen.blit(text, text_rect)
+    flip()
+    sleep(3)
+
 pyg.quit()
