@@ -4,8 +4,10 @@ from pygame.draw import rect
 from colors import GREEN
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
+
 class Snake:
     side = 10
+
     def __init__(self, start_pos):
         self.direction = Direction.RIGHT
         self.body = [
@@ -22,7 +24,7 @@ class Snake:
             return False
 
         for i in range(len(self.body) - 2, -1, -1):
-            self.body[i+1] = self.body[i]
+            self.body[i + 1] = self.body[i]
         x = y = 0
 
         if self.direction == Direction.UP:
@@ -37,7 +39,13 @@ class Snake:
 
         new_head = (self.body[0][0] + x, self.body[0][1] + y)
 
-        if new_head in self.body or new_head[0] < 0 or new_head[0] > SCREEN_WIDTH - self.side or new_head[1] < 0 or new_head[1] > SCREEN_HEIGHT - self.side:
+        if (
+            new_head in self.body
+            or new_head[0] < 0
+            or new_head[0] > SCREEN_WIDTH - self.side
+            or new_head[1] < 0
+            or new_head[1] > SCREEN_HEIGHT - self.side
+        ):
             self.body.clear()
             return False
 

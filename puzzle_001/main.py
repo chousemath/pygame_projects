@@ -1,3 +1,4 @@
+from typing import Tuple, Union
 import pygame as pyg
 from node import Node
 from color import Color
@@ -28,10 +29,13 @@ class Game:
     def run(self):
         pyg.init()
         self.font = pyg.font.Font(None, 40)
+        mouse_click: Union[Tuple[int, int] | None] = None
         while self.state != GameState.QUIT:
             for event in pyg.event.get():
                 if event.type == pyg.QUIT:
                     self.state = GameState.QUIT
+                if event.type == pyg.MOUSEMOTION:
+                    mouse_click = event.pos
 
             mouse_x, mouse_y = pyg.mouse.get_pos()
             nodes.update()

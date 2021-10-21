@@ -9,11 +9,11 @@ from apple import Apple
 from direction import Direction
 from colors import BLACK, WHITE
 
-init() # initialize the pygame engine
+init()  # initialize the pygame engine
 
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = set_mode(size)
-set_caption('Snake') # set screen title
+set_caption("Snake")  # set screen title
 
 clock = Clock()
 
@@ -51,7 +51,7 @@ while playing:
     screen.fill(BLACK)
     ok = snake.draw(screen)
     if not ok:
-        text = font.render('You lose', True, WHITE)
+        text = font.render("You lose", True, WHITE)
         position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 25)
         text_rect = text.get_rect(center=position)
         screen.blit(text, text_rect)
@@ -66,7 +66,7 @@ while playing:
         if collision:
             score += 1
 
-    text = font.render(f'Score: {score}', True, WHITE)
+    text = font.render(f"Score: {score}", True, WHITE)
     position = (75, 40)
     text_rect = text.get_rect(center=position)
     screen.blit(text, text_rect)
@@ -78,5 +78,3 @@ while playing:
     clock.tick(60)
 
 pygame.quit()
-
-

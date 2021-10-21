@@ -4,8 +4,10 @@ from pygame.draw import rect
 from colors import RED
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
+
 class Apple:
     side = 10
+
     def __init__(self, snake):
         self.x = None
         self.y = None
@@ -26,4 +28,3 @@ class Apple:
         self.find_position(snake)
         rect(screen, RED, Rect(self.x, self.y, self.side, self.side))
         return collision
-
